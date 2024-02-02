@@ -24,7 +24,7 @@
 #     # subprocess.call(command, shell=True)
 #     # return "Kommando ausgeführt\n"
 from flask import Flask, request
-import os
+#import os
 import subprocess
 
 app = Flask(__name__)
