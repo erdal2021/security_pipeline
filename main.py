@@ -1,29 +1,52 @@
 # app.py
+# from flask import Flask, request
+# import os
+# import subprocess
+# import pickle
+
+# app = Flask(__name__)
+
+# ALLOWED_COMMANDS = ['echo', 'ls']  # Add more allowed commands
+
+# @app.route('/exec', methods=['GET'])
+# def exec_command():
+#     # Direkte Ausführung von Benutzereingaben ohne Validierung
+#     command = request.args.get('cmd', '').strip()
+#         # Check if the command is in the allowed list
+#     if command not in ALLOWED_COMMANDS:
+#         return "Invalid command\n", 400
+#         # Execute the command using subprocess with safe shell escaping
+#     try:
+#         subprocess.run(command.split(), check=True)
+#         return "Command executed successfully\n"
+#     except subprocess.CalledProcessError as e:
+#         return f"Error executing command: {e}\n", 500
+#     # subprocess.call(command, shell=True)
+#     # return "Kommando ausgeführt\n"
 from flask import Flask, request
 import os
 import subprocess
-import pickle
 
 app = Flask(__name__)
 
-ALLOWED_COMMANDS = ['echo', 'ls']  # Add more allowed commands
+ALLOWED_COMMANDS = {'echo': 'echo', 'ls': 'ls'}  # Add more allowed commands as needed
 
 @app.route('/exec', methods=['GET'])
 def exec_command():
-    # Direkte Ausführung von Benutzereingaben ohne Validierung
+    # Validate and sanitize user input
     command = request.args.get('cmd', '').strip()
-        # Check if the command is in the allowed list
+
+    # Check if the command is in the allowed list
     if command not in ALLOWED_COMMANDS:
         return "Invalid command\n", 400
-        # Execute the command using subprocess with safe shell escaping
+
+    # Execute the command using subprocess with command and arguments provided as a list
     try:
-        subprocess.run(command.split(), check=True)
+        subprocess.run(ALLOWED_COMMANDS[command].split(), check=True)
         return "Command executed successfully\n"
     except subprocess.CalledProcessError as e:
         return f"Error executing command: {e}\n", 500
-    # subprocess.call(command, shell=True)
-    # return "Kommando ausgeführt\n"
-
+    
 @app.route('/upload', methods=['POST'])
 def upload_file():
     # Unsichere Deserialisierung von Benutzereingaben
