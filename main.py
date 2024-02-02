@@ -2,21 +2,16 @@
 from flask import Flask, request
 import os
 import subprocess
-#import pickle
+import pickle
 
 app = Flask(__name__)
 
 @app.route('/exec', methods=['GET'])
 def exec_command():
-    user_input = input("Enter a command: ")
-    command = ["echo", user_input]
-    result = subprocess.run(command, shell=True, check=True)
     # Direkte Ausführung von Benutzereingaben ohne Validierung
-    # command = request.args.get('cmd')
-    # command = ["ls", "-l"]
-    # subprocess.call(command, shell=True)
-    # result = subprocess.run(command, check=True)
-    # return "Kommando ausgeführt\n"
+    command = request.args.get('cmd')
+    subprocess.call(command, shell=False)
+    return "Kommando ausgeführt\n"
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
