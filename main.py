@@ -17,7 +17,7 @@ def exec_command():
         return "Invalid command\n", 400
         # Execute the command using subprocess with safe shell escaping
     try:
-        subprocess.run(command, shell=True, check=True)
+        subprocess.run(command.split(), check=True)
         return "Command executed successfully\n"
     except subprocess.CalledProcessError as e:
         return f"Error executing command: {e}\n", 500
