@@ -29,7 +29,6 @@
 
 # if __name__ == '__main__':
 #     app.run(debug=True, host='0.0.0.0', port=5000)
-
 # app.py
 # from flask import Flask, request
 # import os
@@ -71,19 +70,21 @@
 # app.py
 from flask import Flask, request, jsonify
 import subprocess
-import pickle
+import os
+import securepickle  # Sichere Deserialisierungsbibliothek
 
 app = Flask(__name__)
 
 # Sichere Ausführung von Benutzerbefehlen
 @app.route('/exec', methods=['POST'])
 def exec_command():
-    data = request.get_json()
-    if 'cmd' not in data:
-        return jsonify({"error": "Fehlender Befehl ('cmd')"}), 400
-
-    command = data['cmd']
     try:
+        data = request.get_json()
+        command = data.get('cmd')
+
+        if not command:
+            return jsonify({"error": "Fehlender Befehl ('cmd')"}), 400
+
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         return jsonify({"output": result.stdout, "error": result.stderr}), 200
     except Exception as e:
@@ -94,7 +95,8 @@ def exec_command():
 def upload_file():
     try:
         file = request.files['file']
-        data = pickle.load(file)
+        # Sichere Deserialisierung mit der Bibliothek securepickle
+        data = securepickle.load(file)
         return jsonify({"message": "Datei erfolgreich hochgeladen und verarbeitet"}), 200
     except Exception as e:
         return jsonify({"error": f"Fehler beim Hochladen und Verarbeiten der Datei: {str(e)}"}), 500
@@ -102,12 +104,13 @@ def upload_file():
 # Sichere Ausführung von Befehlen
 @app.route('/run', methods=['POST'])
 def run_command():
-    data = request.get_json()
-    if 'command' not in data:
-        return jsonify({"error": "Fehlender Befehl ('command')"}), 400
-
-    command = data['command']
     try:
+        data = request.get_json()
+        command = data.get('command')
+
+        if not command:
+            return jsonify({"error": "Fehlender Befehl ('command')"}), 400
+
         result = subprocess.run(command, shell=True, capture_output=True, text=True)
         return jsonify({"output": result.stdout, "error": result.stderr}), 200
     except Exception as e:
@@ -115,3 +118,4 @@ def run_command():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+
