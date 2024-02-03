@@ -26,8 +26,6 @@
 #     # Unsichere Verwendung von os.system für Benutzereingaben
 #     os.system(command)
 #     return "Kommando ausgeführt\n"
-    
-
 # if __name__ == '__main__':
 #     app.run(debug=True, host='0.0.0.0', port=5000)
 from flask import Flask, request, abort, json
